@@ -111,6 +111,7 @@ const ARRAY_NUMBER_BUTTON = [
 ];
 
 
+// render button UI
 const createButton = () => {
   ARRAY_NUMBER_BUTTON.forEach((item) => {
     container.innerHTML += `<button id="${item.name}" class="button" 
@@ -120,7 +121,11 @@ const createButton = () => {
 };
 createButton();
 
+
+// Tính toán
 function calculateQueue(value) {
+
+  // check giá trị nhập vào ban đầu
   if (start !== 0) {
     start = parseFloat(start);
     addToQueue(start);
@@ -129,10 +134,10 @@ function calculateQueue(value) {
   var result = value[0];
   var check = 0;
 
+  // kiểm tra độ dài mảng phép tính
   if(value.length > 2){
-
-  for (var i = 2; i < value.length; i = i + 2) {
-    switch (calculator[i - 1]) {
+  for (var i = 2; i < value.length; i = i + 2) { // lặp từ giá trị thứ 2 của mảng, bước nhảy 2
+    switch (calculator[i - 1]) { //calculator[i - 1]) ( lấy ra toán tử xuất hiện trong mảng calculator) 
       case "+":
         result += value[i];
         break;
@@ -140,8 +145,11 @@ function calculateQueue(value) {
         result -= value[i];
         break;
       case "/":
+        // khi chia cho 0
         if (value[i] === 0) {
           check = 1;
+          clearAll();
+          resultUi.innerHTML = "ERROR";
         } else {
           result = result / value[i];
         }
@@ -155,17 +163,16 @@ function calculateQueue(value) {
     this.lastResult = result;
   }
 
-  result = result.toFixed(4);
+  result = result.toFixed(4); // làm tròn số thực
   result = parseFloat(result);
-  if (check === 1) {
-    clearAll();
-    resultUi.innerHTML = "ERROR";
-  } else {
+  if (check !== 1) {
     resultUi.innerHTML = result;
     start = result;
     calculator = [];
-  }
+  } 
 }
+
+// thực hiện nếu mảng tính toán < 2 phần tử 
 else{
     startResult = value[0]
     start = result;
@@ -174,36 +181,47 @@ else{
 }
 
 
+// add button to calculator
 function addToQueue(start) {
   calculator.push(start);
 }
 
-
+// clear
 function clearAll() {
   calculator = [];
   start = 0;
   resultUi.innerHTML = "0";
 }
 
+// get number when onclick
 function getNumberButton(number) {
+  // ckeck result
   if (startResult != 0) {
-    if(start !== "+" || start !== "-" || start !=="*" || start !== "/"){
+    // click các phím số khi đang tồn tại Result
+    if(start !== "+" || start !== "-" || start !=="*" || start !== "/"){ 
       start = 0;
     }
     resultUi.innerHTML = "0"
     startResult = 0;
   }
+ 
+  // resest UI
   if (resultUi.innerHTML === "ERROR" || (resultUi.innerHTML == "0" && number != ".")) {
     resultUi.innerHTML = "";
   }
-  if (!(number === ".") || !start.match(/[.]/)) {
+
+  // kiểm tra giá trị nhập vào ban đầu khác (.) và kiểm tra trong mảng đã tồn tại dấu (.) hay chưa 
+  if (!(number === ".") || !start.match(/[.]/)) { 
     start += number;
     resultUi.innerHTML += number;
   }
 }
 
 
+
+// get Math
 function getMathButton(math) {
+  // ckeck giá trị đầu vào
   if (start !== 0 && start !== "-") {
     start = parseFloat(start);
     addToQueue(start);
@@ -211,6 +229,8 @@ function getMathButton(math) {
     resultUi.innerHTML += math;
     start = 0;
   }
+
+  // ckeck phần tử đầu tiên của mảng có phải là NAN hay không
   if (math == "-" && isNaN(calculator[0]) && start !== "-") {
     start = "-";
     resultUi.innerHTML = "-";
